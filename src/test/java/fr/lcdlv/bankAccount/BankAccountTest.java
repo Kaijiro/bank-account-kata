@@ -26,4 +26,12 @@ class BankAccountTest {
 
         assertThat(bankAccount.getTotalAmount()).isEqualTo(250.0);
     }
+
+    @Test
+    void asAClientIfIWithdrawMoneyMyBankAccountShouldBeWithdrawnOfThisAmount() {
+        BankAccount bankAccount = new BankAccount(150.0);
+        bankAccount.makeAWithdrawalOf(100.0);
+
+        assertThat(bankAccount.getTotalAmount()).isEqualTo(50.0);
+    }
 }

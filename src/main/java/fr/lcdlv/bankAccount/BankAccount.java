@@ -15,4 +15,8 @@ class BankAccount {
     void makeADepositOf(double amount) {
         this.amount += amount;
     }
+
+    void makeAWithdrawalOf(double amount) {
+        this.amount -= amount;
+    }
 }
