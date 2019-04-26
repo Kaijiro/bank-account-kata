@@ -20,17 +20,9 @@ class BankAccount {
         return this.amount;
     }
 
-    void makeADepositOf(double amount) {
-        this.amount += amount;
-    }
-
     void performOperation(Operation operation) {
         this.amount = operation.performOperationOnAmount(this.amount);
         this.operations.add(operation);
-    }
-
-    void makeAWithdrawalOf(double amount) {
-        this.amount -= amount;
     }
 
     boolean referenceIs(String referenceToTest) {

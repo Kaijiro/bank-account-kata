@@ -35,8 +35,14 @@ class BankAccountTest {
     @Test
     void asAClientIfISaveMoneyMyBankAccountShouldBeIncreasedOfThisAmount() throws AccountNotFoundException {
         BankAccount bankAccount = accounts.retrieveAccountWithReference(ACCOUNT_1_REFERENCE);
-        double amountToDeposit = 100.0;
-        bankAccount.makeADepositOf(amountToDeposit);
+        double amountToDeposit = 100;
+        Operation depositOperation = anOperation()
+                .withOperationType(OperationType.DEPOSIT)
+                .withOperationDate(LocalDateTime.of(2019, 4, 26, 16, 0))
+                .withAmount(100)
+                .build();
+
+        bankAccount.performOperation(depositOperation);
 
         assertThat(bankAccount.getTotalAmount()).isEqualTo(ACCOUNT_1_INITIAL_BALANCE + amountToDeposit);
     }
@@ -45,7 +51,14 @@ class BankAccountTest {
     void asAClientIfIWithdrawMoneyMyBankAccountShouldBeWithdrawnOfThisAmount() throws AccountNotFoundException {
         BankAccount bankAccount = accounts.retrieveAccountWithReference(ACCOUNT_1_REFERENCE);
         double amountToWithdraw = 70.0;
-        bankAccount.makeAWithdrawalOf(amountToWithdraw);
+
+        Operation operation = anOperation()
+                .withOperationType(OperationType.WITHDRAWAL)
+                .withOperationDate(LocalDateTime.of(2019, 4, 26, 16, 0))
+                .withAmount(amountToWithdraw)
+                .build();
+
+        bankAccount.performOperation(operation);
 
         assertThat(bankAccount.getTotalAmount()).isEqualTo(ACCOUNT_1_INITIAL_BALANCE - amountToWithdraw);
     }
