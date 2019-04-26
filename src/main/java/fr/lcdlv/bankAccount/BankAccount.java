@@ -1,10 +1,14 @@
 package fr.lcdlv.bankAccount;
 
+import java.util.Objects;
+
 class BankAccount {
 
+    private String reference;
     private double amount;
 
-    BankAccount(double initialAmount) {
+    BankAccount(String reference, double initialAmount) {
+        this.reference = reference;
         this.amount = initialAmount;
     }
 
@@ -18,5 +22,9 @@ class BankAccount {
 
     void makeAWithdrawalOf(double amount) {
         this.amount -= amount;
+    }
+
+    boolean referenceIs(String referenceToTest) {
+        return Objects.equals(this.reference, referenceToTest);
     }
 }
