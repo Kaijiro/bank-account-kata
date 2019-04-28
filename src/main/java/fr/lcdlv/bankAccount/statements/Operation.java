@@ -1,13 +1,15 @@
-package fr.lcdlv.bankAccount;
+package fr.lcdlv.bankAccount.statements;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-class Operation {
+public class Operation {
 
     private LocalDateTime operationDate;
     private OperationType operationType;
     private double amount;
+    private double balanceAfterOperation;
 
     private Operation(LocalDateTime operationDate, OperationType operationType, double amount) {
         this.operationDate = operationDate;
@@ -30,17 +32,39 @@ class Operation {
         return Objects.hash(operationDate, operationType, amount);
     }
 
-    double performOperationOnAmount(double amount) {
+    public double performOperationOnAmount(double amount) {
+        double balance = amount;
         if (operationType.equals(OperationType.DEPOSIT)) {
-            return amount + this.amount;
+            balance = amount + this.amount;
         } else if (operationType.equals(OperationType.WITHDRAWAL)) {
-            return amount - this.amount;
+            balance = amount - this.amount;
         }
 
-        return amount;
+        this.balanceAfterOperation = balance;
+        return balance;
     }
 
-    static final class OperationBuilder {
+    private String getFormattedDate() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/YYYY");
+        return this.operationDate.format(formatter);
+    }
+
+    public void addSelfToStatementPrinter(StatementPrinter statementPrinter) {
+        statementPrinter.append(getFormattedDate());
+        statementPrinter.appendSeparator();
+
+        if(this.operationType == OperationType.DEPOSIT){
+            statementPrinter.append("+");
+        } else if(this.operationType == OperationType.WITHDRAWAL){
+            statementPrinter.append("-");
+        }
+
+        statementPrinter.append(String.valueOf(this.amount));
+        statementPrinter.appendSeparator();
+        statementPrinter.append(String.valueOf(this.balanceAfterOperation));
+    }
+
+    public static final class OperationBuilder {
         private LocalDateTime operationDate;
         private OperationType operationType;
         private double amount;
@@ -48,26 +72,26 @@ class Operation {
         private OperationBuilder() {
         }
 
-        static OperationBuilder anOperation() {
+        public static OperationBuilder anOperation() {
             return new OperationBuilder();
         }
 
-        OperationBuilder withOperationDate(LocalDateTime operationDate) {
+        public OperationBuilder withOperationDate(LocalDateTime operationDate) {
             this.operationDate = operationDate;
             return this;
         }
 
-        OperationBuilder withOperationType(OperationType operationType) {
+        public OperationBuilder withOperationType(OperationType operationType) {
             this.operationType = operationType;
             return this;
         }
 
-        OperationBuilder withAmount(double amount) {
+        public OperationBuilder withAmount(double amount) {
             this.amount = amount;
             return this;
         }
 
-        Operation build() {
+        public Operation build() {
             return new Operation(operationDate, operationType, amount);
         }
     }

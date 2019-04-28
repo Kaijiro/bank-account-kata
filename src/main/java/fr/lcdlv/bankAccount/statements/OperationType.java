@@ -1,4 +1,4 @@
-package fr.lcdlv.bankAccount;
+package fr.lcdlv.bankAccount.statements;
 
 public enum OperationType {
     DEPOSIT,
