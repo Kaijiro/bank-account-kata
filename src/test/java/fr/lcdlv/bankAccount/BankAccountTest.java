@@ -19,8 +19,8 @@ class BankAccountTest {
 
     private static final String ACCOUNT_1_REFERENCE = "123456789";
     private static final String ACCOUNT_2_REFERENCE = "987654321";
-    private static final double ACCOUNT_1_INITIAL_BALANCE = 1234.56;
-    private static final double ACCOUNT_2_INITIAL_BALANCE = 2500.00;
+    private static final Amount ACCOUNT_1_INITIAL_BALANCE = Amount.of(123456);
+    private static final Amount ACCOUNT_2_INITIAL_BALANCE = Amount.of(250000);
 
     private Accounts accounts;
 
@@ -33,29 +33,25 @@ class BankAccountTest {
     }
 
     @Test
-    void envShouldBeSetupAndRunning() {
-        assertThat(true).isTrue();
-    }
-
-    @Test
     void asAClientIfISaveMoneyMyBankAccountShouldBeIncreasedOfThisAmount() throws AccountNotFoundException {
         BankAccount bankAccount = accounts.retrieveAccountWithReference(ACCOUNT_1_REFERENCE);
-        double amountToDeposit = 100;
+        Amount amountToDeposit = Amount.of(10000);
         Operation depositOperation = anOperation()
                 .withOperationType(OperationType.DEPOSIT)
                 .withOperationDate(LocalDateTime.of(2019, 4, 26, 16, 0))
-                .withAmount(100)
+                .withAmount(Amount.of(10000))
                 .build();
 
         bankAccount.performOperation(depositOperation);
 
-        assertThat(bankAccount.getTotalAmount()).isEqualTo(ACCOUNT_1_INITIAL_BALANCE + amountToDeposit);
+        Amount accountBalanceExpected = ACCOUNT_1_INITIAL_BALANCE.add(amountToDeposit);
+        assertThat(bankAccount.getTotalAmount()).isEqualTo(accountBalanceExpected);
     }
 
     @Test
     void asAClientIfIWithdrawMoneyMyBankAccountShouldBeWithdrawnOfThisAmount() throws AccountNotFoundException {
         BankAccount bankAccount = accounts.retrieveAccountWithReference(ACCOUNT_1_REFERENCE);
-        double amountToWithdraw = 70.0;
+        Amount amountToWithdraw = Amount.of(7000);
 
         Operation operation = anOperation()
                 .withOperationType(OperationType.WITHDRAWAL)
@@ -65,7 +61,8 @@ class BankAccountTest {
 
         bankAccount.performOperation(operation);
 
-        assertThat(bankAccount.getTotalAmount()).isEqualTo(ACCOUNT_1_INITIAL_BALANCE - amountToWithdraw);
+        Amount accountBalanceExpected = ACCOUNT_1_INITIAL_BALANCE.subtract(amountToWithdraw);
+        assertThat(bankAccount.getTotalAmount()).isEqualTo(accountBalanceExpected);
     }
 
     @Test
@@ -75,22 +72,22 @@ class BankAccountTest {
         Operation firstDeposit = anOperation()
                 .withOperationType(OperationType.DEPOSIT)
                 .withOperationDate(LocalDateTime.of(2019, 4, 26, 16, 0))
-                .withAmount(1000)
+                .withAmount(Amount.of(100000))
                 .build();
         Operation firstWithdrawal = anOperation()
                 .withOperationType(OperationType.WITHDRAWAL)
                 .withOperationDate(LocalDateTime.of(2019, 4, 27, 9, 0))
-                .withAmount(400)
+                .withAmount(Amount.of(40000))
                 .build();
         Operation secondWithdrawal = anOperation()
                 .withOperationType(OperationType.WITHDRAWAL)
                 .withOperationDate(LocalDateTime.of(2019, 4, 27, 16, 0))
-                .withAmount(100)
+                .withAmount(Amount.of(10000))
                 .build();
         Operation secondDeposit = anOperation()
                 .withOperationType(OperationType.DEPOSIT)
                 .withOperationDate(LocalDateTime.of(2019, 4, 28, 14, 0))
-                .withAmount(700)
+                .withAmount(Amount.of(70000))
                 .build();
 
         bankAccount.performOperation(firstDeposit);
@@ -110,22 +107,22 @@ class BankAccountTest {
         Operation firstDeposit = anOperation()
                 .withOperationType(OperationType.DEPOSIT)
                 .withOperationDate(LocalDateTime.of(2019, 4, 26, 16, 0))
-                .withAmount(1000)
+                .withAmount(Amount.of(100000))
                 .build();
         Operation firstWithdrawal = anOperation()
                 .withOperationType(OperationType.WITHDRAWAL)
                 .withOperationDate(LocalDateTime.of(2019, 4, 27, 9, 0))
-                .withAmount(400)
+                .withAmount(Amount.of(40000))
                 .build();
         Operation secondWithdrawal = anOperation()
                 .withOperationType(OperationType.WITHDRAWAL)
                 .withOperationDate(LocalDateTime.of(2019, 4, 27, 16, 0))
-                .withAmount(100)
+                .withAmount(Amount.of(10000))
                 .build();
         Operation secondDeposit = anOperation()
                 .withOperationType(OperationType.DEPOSIT)
                 .withOperationDate(LocalDateTime.of(2019, 4, 28, 14, 0))
-                .withAmount(700)
+                .withAmount(Amount.of(70000))
                 .build();
 
         bankAccount.performOperation(firstDeposit);

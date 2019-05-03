@@ -1,5 +1,7 @@
 package fr.lcdlv.bankAccount.statements;
 
+import fr.lcdlv.bankAccount.Amount;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
@@ -8,10 +10,10 @@ public class Operation {
 
     private LocalDateTime operationDate;
     private OperationType operationType;
-    private double amount;
-    private double balanceAfterOperation;
+    private Amount amount;
+    private Amount balanceAfterOperation;
 
-    private Operation(LocalDateTime operationDate, OperationType operationType, double amount) {
+    private Operation(LocalDateTime operationDate, OperationType operationType, Amount amount) {
         this.operationDate = operationDate;
         this.operationType = operationType;
         this.amount = amount;
@@ -21,23 +23,31 @@ public class Operation {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         Operation operation = (Operation) o;
-        return Double.compare(operation.amount, amount) == 0 &&
-                Objects.equals(operationDate, operation.operationDate) &&
-                operationType == operation.operationType;
+
+        if (!Objects.equals(operationDate, operation.operationDate))
+            return false;
+        if (operationType != operation.operationType) return false;
+        if (!Objects.equals(amount, operation.amount)) return false;
+        return Objects.equals(balanceAfterOperation, operation.balanceAfterOperation);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(operationDate, operationType, amount);
+        int result = operationDate != null ? operationDate.hashCode() : 0;
+        result = 31 * result + (operationType != null ? operationType.hashCode() : 0);
+        result = 31 * result + (amount != null ? amount.hashCode() : 0);
+        result = 31 * result + (balanceAfterOperation != null ? balanceAfterOperation.hashCode() : 0);
+        return result;
     }
 
-    public double performOperationOnAmount(double amount) {
-        double balance = amount;
+    public Amount performOperationOnAmount(Amount amount) {
+        Amount balance = amount;
         if (operationType.equals(OperationType.DEPOSIT)) {
-            balance = amount + this.amount;
+            balance = amount.add(this.amount);
         } else if (operationType.equals(OperationType.WITHDRAWAL)) {
-            balance = amount - this.amount;
+            balance = amount.subtract(this.amount);
         }
 
         this.balanceAfterOperation = balance;
@@ -62,12 +72,13 @@ public class Operation {
         statementPrinter.append(String.valueOf(this.amount));
         statementPrinter.appendSeparator();
         statementPrinter.append(String.valueOf(this.balanceAfterOperation));
+        statementPrinter.appendSeparator();
     }
 
     public static final class OperationBuilder {
         private LocalDateTime operationDate;
         private OperationType operationType;
-        private double amount;
+        private Amount amount;
 
         private OperationBuilder() {
         }
@@ -86,7 +97,7 @@ public class Operation {
             return this;
         }
 
-        public OperationBuilder withAmount(double amount) {
+        public OperationBuilder withAmount(Amount amount) {
             this.amount = amount;
             return this;
         }

@@ -18,6 +18,7 @@ public class StatementPrinter {
         builder.append("  Transaction  ");
         appendSeparator();
         builder.append("  Balance  ");
+        appendSeparator();
     }
 
     public void newLine() {

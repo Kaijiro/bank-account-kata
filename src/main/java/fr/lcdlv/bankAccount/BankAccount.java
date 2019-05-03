@@ -7,23 +7,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class BankAccount {
+class BankAccount {
 
     private String reference;
-    private double amount;
+    private Amount amount;
     private List<Operation> operations;
 
-    BankAccount(String reference, double initialAmount) {
+    BankAccount(String reference, Amount initialAmount) {
         this.reference = reference;
         this.amount = initialAmount;
         this.operations = new ArrayList<>();
     }
 
-    public double getTotalAmount() {
+    Amount getTotalAmount() {
         return this.amount;
     }
 
-    public void performOperation(Operation operation) {
+    void performOperation(Operation operation) {
         this.amount = operation.performOperationOnAmount(this.amount);
         this.operations.add(operation);
     }
@@ -32,11 +32,11 @@ public class BankAccount {
         return Objects.equals(this.reference, referenceToTest);
     }
 
-    public List<Operation> retrieveHistory() {
+    List<Operation> retrieveHistory() {
         return this.operations;
     }
 
-    public String getHistory(){
+    String getHistory() {
         StatementPrinter statementPrinter = new StatementPrinter();
 
         statementPrinter.createHeader();
