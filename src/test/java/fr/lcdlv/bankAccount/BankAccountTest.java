@@ -2,39 +2,24 @@ package fr.lcdlv.bankAccount;
 
 import fr.lcdlv.bankAccount.statements.Operation;
 import fr.lcdlv.bankAccount.statements.OperationType;
-import org.junit.jupiter.api.BeforeEach;
+import fr.lcdlv.bankAccount.statements.Operations;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
 
 import static fr.lcdlv.bankAccount.statements.Operation.OperationBuilder.anOperation;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class BankAccountTest {
 
-    private static final String ACCOUNT_1_REFERENCE = "123456789";
-    private static final String ACCOUNT_2_REFERENCE = "987654321";
-    private static final Amount ACCOUNT_1_INITIAL_BALANCE = Amount.of(123456);
-    private static final Amount ACCOUNT_2_INITIAL_BALANCE = Amount.of(250000);
-
-    private Accounts accounts;
-
-    @BeforeEach
-    void setup() {
-        accounts = new Accounts(
-                new BankAccount(ACCOUNT_1_REFERENCE, ACCOUNT_1_INITIAL_BALANCE),
-                new BankAccount(ACCOUNT_2_REFERENCE, ACCOUNT_2_INITIAL_BALANCE)
-        );
-    }
+    private static final Amount ACCOUNT_INITIAL_BALANCE = Amount.of(100000);
 
     @Test
-    void asAClientIfISaveMoneyMyBankAccountShouldBeIncreasedOfThisAmount() throws AccountNotFoundException {
-        BankAccount bankAccount = accounts.retrieveAccountWithReference(ACCOUNT_1_REFERENCE);
+    void asAClientIfISaveMoneyMyBankAccountShouldBeIncreasedOfThisAmount(){
+        BankAccount bankAccount = new BankAccount(ACCOUNT_INITIAL_BALANCE);
         Amount amountToDeposit = Amount.of(10000);
         Operation depositOperation = anOperation()
                 .withOperationType(OperationType.DEPOSIT)
@@ -44,13 +29,13 @@ class BankAccountTest {
 
         bankAccount.performOperation(depositOperation);
 
-        Amount accountBalanceExpected = ACCOUNT_1_INITIAL_BALANCE.add(amountToDeposit);
+        Amount accountBalanceExpected = ACCOUNT_INITIAL_BALANCE.add(amountToDeposit);
         assertThat(bankAccount.getTotalAmount()).isEqualTo(accountBalanceExpected);
     }
 
     @Test
-    void asAClientIfIWithdrawMoneyMyBankAccountShouldBeWithdrawnOfThisAmount() throws AccountNotFoundException {
-        BankAccount bankAccount = accounts.retrieveAccountWithReference(ACCOUNT_1_REFERENCE);
+    void asAClientIfIWithdrawMoneyMyBankAccountShouldBeWithdrawnOfThisAmount(){
+        BankAccount bankAccount = new BankAccount(ACCOUNT_INITIAL_BALANCE);
         Amount amountToWithdraw = Amount.of(7000);
 
         Operation operation = anOperation()
@@ -61,13 +46,13 @@ class BankAccountTest {
 
         bankAccount.performOperation(operation);
 
-        Amount accountBalanceExpected = ACCOUNT_1_INITIAL_BALANCE.subtract(amountToWithdraw);
+        Amount accountBalanceExpected = ACCOUNT_INITIAL_BALANCE.subtract(amountToWithdraw);
         assertThat(bankAccount.getTotalAmount()).isEqualTo(accountBalanceExpected);
     }
 
     @Test
-    void asAClientIWantToBeAbleToSeeMyAccountHistory() throws AccountNotFoundException {
-        BankAccount bankAccount = accounts.retrieveAccountWithReference(ACCOUNT_2_REFERENCE);
+    void asAClientIWantToBeAbleToSeeMyAccountHistory(){
+        BankAccount bankAccount = new BankAccount(ACCOUNT_INITIAL_BALANCE);
 
         Operation firstDeposit = anOperation()
                 .withOperationType(OperationType.DEPOSIT)
@@ -95,14 +80,18 @@ class BankAccountTest {
         bankAccount.performOperation(secondWithdrawal);
         bankAccount.performOperation(secondDeposit);
 
-        List<Operation> operations = Arrays.asList(firstDeposit, firstWithdrawal, secondWithdrawal, secondDeposit);
+        Operations operations = new Operations();
+        operations.addOperation(firstDeposit);
+        operations.addOperation(firstWithdrawal);
+        operations.addOperation(secondWithdrawal);
+        operations.addOperation(secondDeposit);
 
-        assertThat(bankAccount.retrieveHistory()).hasSameElementsAs(operations);
+        assertThat(bankAccount.retrieveOperationHistory()).isEqualTo(operations);
     }
 
     @Test
-    void asAClientIWantToPrintMyAccountHistory() throws IOException, AccountNotFoundException {
-        BankAccount bankAccount = accounts.retrieveAccountWithReference(ACCOUNT_2_REFERENCE);
+    void asAClientIWantToPrintMyAccountHistory() throws IOException {
+        BankAccount bankAccount = new BankAccount(Amount.of(250000));
 
         Operation firstDeposit = anOperation()
                 .withOperationType(OperationType.DEPOSIT)

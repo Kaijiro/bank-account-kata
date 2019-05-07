@@ -7,7 +7,7 @@ public class Amount {
         this.amountInCents = amountInCents;
     }
 
-    public static Amount of(int amountInCents) {
+    static Amount of(int amountInCents) {
         return new Amount(Math.abs(amountInCents));
     }
 
@@ -21,7 +21,7 @@ public class Amount {
 
     @Override
     public String toString() {
-        return String.format("%.2f", Double.valueOf(this.amountInCents / 100));
+        return String.format("%.2f", (double) (this.amountInCents / 100));
     }
 
     @Override

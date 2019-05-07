@@ -19,29 +19,6 @@ public class Operation {
         this.amount = amount;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Operation operation = (Operation) o;
-
-        if (!Objects.equals(operationDate, operation.operationDate))
-            return false;
-        if (operationType != operation.operationType) return false;
-        if (!Objects.equals(amount, operation.amount)) return false;
-        return Objects.equals(balanceAfterOperation, operation.balanceAfterOperation);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = operationDate != null ? operationDate.hashCode() : 0;
-        result = 31 * result + (operationType != null ? operationType.hashCode() : 0);
-        result = 31 * result + (amount != null ? amount.hashCode() : 0);
-        result = 31 * result + (balanceAfterOperation != null ? balanceAfterOperation.hashCode() : 0);
-        return result;
-    }
-
     public Amount performOperationOnAmount(Amount amount) {
         Amount balance = amount;
         if (operationType.equals(OperationType.DEPOSIT)) {
@@ -73,6 +50,39 @@ public class Operation {
         statementPrinter.appendSeparator();
         statementPrinter.append(String.valueOf(this.balanceAfterOperation));
         statementPrinter.appendSeparator();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Operation operation = (Operation) o;
+
+        if (!Objects.equals(operationDate, operation.operationDate))
+            return false;
+        if (operationType != operation.operationType) return false;
+        if (!Objects.equals(amount, operation.amount)) return false;
+        return Objects.equals(balanceAfterOperation, operation.balanceAfterOperation);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = operationDate != null ? operationDate.hashCode() : 0;
+        result = 31 * result + (operationType != null ? operationType.hashCode() : 0);
+        result = 31 * result + (amount != null ? amount.hashCode() : 0);
+        result = 31 * result + (balanceAfterOperation != null ? balanceAfterOperation.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Operation{" +
+                "\noperationDate=" + operationDate +
+                ", \noperationType=" + operationType +
+                ", \namount=" + amount +
+                ", \nbalanceAfterOperation=" + balanceAfterOperation +
+                '}';
     }
 
     public static final class OperationBuilder {
