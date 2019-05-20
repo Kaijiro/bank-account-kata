@@ -120,7 +120,6 @@ class BankAccountTest {
         bankAccount.performOperation(secondDeposit);
 
         String expectedPrinterContent = String.join("\n", Files.readAllLines(Paths.get("src/test/resources/printer_reference.txt")));
-        System.out.println(bankAccount.getHistory());
         assertThat(bankAccount.getHistory()).isEqualTo(expectedPrinterContent);
     }
 }
